@@ -1,0 +1,60 @@
+function GetClipboardText: string;
+var
+  hData: HGlobal;
+  Len: integer;
+  buf: thandle;
+  StrData: string;
+begin
+if OpenClipboard(0) then
+    begin
+    try
+      try
+        buf := GetClipboardData(CF_UNICODETEXT);
+        StrData := PWideChar(GlobalLock(buf));
+        try
+          result := StrData;
+        finally
+          GlobalUnlock(buf);
+        end;
+      except
+      raise
+      end;
+    finally
+      CloseClipboard;
+    end;
+  end
+  else
+end;
+
+function SetClipboardText(Wnd: HWND; Value: string): Boolean;
+var
+  hData: HGlobal;
+  pData: pointer;
+  Len: integer;
+begin
+  Result := True;
+  if OpenClipboard(Wnd) then
+  begin
+    try
+      Len := Length(Value) + 1;
+      hData := GlobalAlloc(GMEM_MOVEABLE or GMEM_DDESHARE, Len);
+      try
+        pData := GlobalLock(hData);
+        try
+          Move(PChar(Value)^, pData^, Len);
+          EmptyClipboard;
+          SetClipboardData(CF_Text, hData);
+        finally
+          GlobalUnlock(hData);
+        end;
+      except
+        GlobalFree(hData);
+        raise
+      end;
+    finally
+      CloseClipboard;
+    end;
+  end
+  else
+    Result := False;
+end;
