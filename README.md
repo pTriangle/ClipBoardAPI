@@ -1,0 +1,2 @@
+# ClipBoardAPI
+WinAPI clipboard.
