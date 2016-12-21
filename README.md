@@ -1,2 +1,0 @@
-# ClipBoardAPI
-WinAPI clipboard.
